@@ -1,6 +1,7 @@
 freqHz = 1000;
 iterations = 20000;
 fs = 44100;
+lpf_f = 0.5;                    % low pass filter factor
 
 N = floor(fs/freqHz);           % compute delay line length
 x = 2 * rand(1,N) - 1;          % generate noise centered at zero
@@ -18,11 +19,10 @@ signal = 0;                     % initialize output signal
 n = 1;                          % initialize iterator
 
 while n < iterations
-    y = x(n) + 0.5*(delayline(N) + delayline(N+1));
+    y = x(n) + lpf_f * delayline(N) + (1-lpf_f) * delayline(N+1);
     delayline = [y, delayline(1:dloffset)];
     signal = [signal y];
     n = n+1;
 end
 plot(signal);title('Simple Karplus Strong algorithm')
-
 % soundsc(signal, fs)
