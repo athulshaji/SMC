@@ -1,8 +1,8 @@
 % define input parameters
 freqHz = 500;
-iterations = 20000;
+iterations = 200000;
 fs = 44100;
-lpf_a = 0.9;                                            % low pass filter factor (decaying factor)
+lpf_a = 0.5;                                            % low pass filter factor (decaying factor)
 
 % Karplus strong function - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -18,19 +18,16 @@ if iterations > length(x)
 end
 
 y = 0;                                                  % initialize new sample
-signal = 0;                                             % initialize output signal
+signal = zeros(1,iterations);                           % initialize output signal
 n = 1;                                                  % initialize iterator
 
 while n < iterations
-    
-    y = x(n) + 0.5*(delayline(N) + delayline(N+1));     % karplus strong delay
-    
-    y = lpf_a * y + (1 - lpf_a) * delayline(1);         % apply low pass filter to control decay
+    y = x(n) + lpf_a * delayline(N) + (1-lpf_a) * delayline(N+1);       % karplus strong with variable low pass filter
     
     delayline = [y, delayline(1:dloffset)];             % shift delay line and write new sample
-    signal = [signal y];                                % append new sample to output signal
+    signal(n) = y;                                      % append new sample to output signal
     
     n = n+1;                                            % increase iterator
 end
-% plot(signal);title('Simple Karplus Strong algorithm')   % show signal
-soundsc(signal, fs)                                     % play it
+figure;plot(signal);title('Simple Karplus Strong algorithm')   % show signal
+% soundsc(signal, fs)                                     % play it
