@@ -1,14 +1,18 @@
 % define input parameters
 freqHz = 500;
-iterations = 20000;
+iterations = 50000;
 fs = 44100;
 lpf_a = 0.1;                                            % low pass filter factor (decaying factor)
-apf_g = 0.9;                                            % all pass filter factor (harmonicity factor)
+apf_g = 0.4;                                            % all pass filter factor (harmonicity factor)
+NPp = 60;                                               % NPp = pick positon in samples
 
 % Karplus strong function - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 N = floor(fs/freqHz);                                   % compute delay line length
-exciterSignal = 2 * rand(1,N) - 1;                      % generate noise centered at zero
+% exciterSignal = 2 * rand(1,N) - 1;                      % generate noise centered at zero
+exciterSignal = [[0:NPp]/NPp,(N-[(NPp+1):N])/(N-NPp)];
+
+% N = total delay length in samples
 
 delayline = [zeros(1,N+1)];                             % initialize delayline
 dloffset = length(delayline)-1;                         % compute delay offset
