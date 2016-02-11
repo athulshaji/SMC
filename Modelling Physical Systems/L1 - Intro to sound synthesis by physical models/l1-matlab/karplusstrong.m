@@ -3,8 +3,9 @@ freqHz = 500;
 iterations = 50000;
 fs = 44100;
 lpf_a = 0.1;                                            % low pass filter factor (decaying factor)
-apf_g = 0.4;                                            % all pass filter factor (harmonicity factor)
-NPp = 60;                                               % NPp = pick positon in samples
+apf_g = 0.5;                                            % all pass filter factor (harmonicity factor)
+bi_filename = 'p_dobro_2.wav';              
+[bodyimpulse,vs] = audioread(bi_filename);              % read body impulse response            
 
 % Karplus strong function - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -12,7 +13,10 @@ N = floor(fs/freqHz);                                   % compute delay line len
 
 % compute exciter signal:
 % exciterSignal = 2 * rand(1,N) - 1;                      % generate noise centered at zero
-exciterSignal = [[0:NPp]/NPp,(N-[(NPp+1):N])/(N-NPp)];  % triangular funciton
+NPp = N*0.5;                                             % NPp = pick positon in samples
+exciterSignal = [[0:NPp]/NPp,(N-[(NPp+1):N])/(N-NPp)]*2-1;% triangular funciton
+exciterSignal = conv(exciterSignal,bodyimpulse,'same');   % convolve exciter signal with body impulse:
+
 
 delayline = [zeros(1,N+1)];                             % initialize delayline
 dloffset = length(delayline)-1;                         % compute delay offset
