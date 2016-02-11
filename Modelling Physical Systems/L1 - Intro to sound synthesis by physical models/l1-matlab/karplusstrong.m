@@ -8,11 +8,11 @@ NPp = 60;                                               % NPp = pick positon in 
 
 % Karplus strong function - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-N = floor(fs/freqHz);                                   % compute delay line length
-% exciterSignal = 2 * rand(1,N) - 1;                      % generate noise centered at zero
-exciterSignal = [[0:NPp]/NPp,(N-[(NPp+1):N])/(N-NPp)];
+N = floor(fs/freqHz);                                   % compute delay line length (samples)
 
-% N = total delay length in samples
+% compute exciter signal:
+% exciterSignal = 2 * rand(1,N) - 1;                      % generate noise centered at zero
+exciterSignal = [[0:NPp]/NPp,(N-[(NPp+1):N])/(N-NPp)];  % triangular funciton
 
 delayline = [zeros(1,N+1)];                             % initialize delayline
 dloffset = length(delayline)-1;                         % compute delay offset
