@@ -40,18 +40,19 @@ function y = wienerfilterfreqdomain(x,N)
         mX = (mX >= prevmX) .* (beta_a * prevmX + (1-beta_a) * mX) + ...
             (mX < prevmX) .* (beta_d * prevmX + (1-beta_d) * mX);
         
+        prevmX = mX;                                                       % store spectrum for next iteration
+        
         % estimate magnitude of the noise signal:
         noiseMag = (mX >= noiseMag) .* (alpha_a * noiseMag + (1-alpha_a) * mX) + ...
             (mX < noiseMag) .* (alpha_d * noiseMag + (1-alpha_d) * mX);
         
-        prevmX = mX;
         %-----Compute filter-----%
-        Hw = 1 - periodogram(noiseMag)/periodogram(mX);
-%         Hw = 1 - power(noiseMag,2)/power(mX,2);
+        Hw = 1 - periodogram(noiseMag)/periodogram(mX);                    % Wiener filter
+        % Hw = 1 - power(noiseMag,2)/power(mX,2);
         
-        %-----transformations-----%
+        %-----transformations, filtering-----%
         mY = Hw * mX;                                                      % filter input magnitude
-%         mY = mX;
+        % mY = mX;                                                           % no modification
         pY = pX;
         
         %-----synthesis-----%
