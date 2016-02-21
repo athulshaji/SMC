@@ -14,14 +14,16 @@ function y = stft_AnalysisAndSynthesis(x,N,window)
     
     while pin <= pend
         %-----analysis-----%
-        fftbuffer = x(pin:pin+N-1) .* window;                         % frame and window the input sound
+        fftbuffer = x(pin:pin+N-1) .* window;                              % frame and window the input sound
         X = fft(fftbuffer);                                                % compute FFT
         mX = 20*log10(abs(X(1:N2)));                                       % magnitude spectrum
         pX = angle(X(1:N2));                                               % phase spectrum        
         
         %-----transformations-----%
-        mY = mX;
-        pY = pX;
+        mY = zeros(N2,1);                                                  % initialize output magnitude spectrum
+        lpf_idx = 1:ceil(N2/2);                                            % low pass filter indeces (rest will be zeros)
+        mY(lpf_idx) = mY(lpf_idx) + mX(lpf_idx);                           % use only samples in lpf indices
+        pY = pX;                                                           % output phase spectrum
         
         %-----synthesis-----%
         Y = zeros(N,1);                                                    % initialize output spectrum
