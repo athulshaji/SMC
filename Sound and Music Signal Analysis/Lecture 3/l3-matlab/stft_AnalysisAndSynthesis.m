@@ -16,10 +16,11 @@ function y = stft_AnalysisAndSynthesis(x,N,window)
         %-----analysis-----%
         fftbuffer = x(pin:pin+N-1) .* window;                              % frame and window the input sound
         X = fft(fftbuffer);                                                % compute FFT
-        mX = 20*log10(abs(X(1:N2)));                                       % magnitude spectrum
+        mX = abs(X(1:N2));                                                 % magnitude spectrum (linear)
         pX = angle(X(1:N2));                                               % phase spectrum        
-        
-        %-----transformations-----%
+        % mX = 20*log10(abs(X(1:N2)));                                     % % magnitude spectrum (dB)
+
+        %-----transformations: LOW PASS FILTER-----%
         mY = zeros(N2,1);                                                  % initialize output magnitude spectrum
         lpf_idx = 1:ceil(N2/2);                                            % low pass filter indeces (rest will be zeros)
         mY(lpf_idx) = mY(lpf_idx) + mX(lpf_idx);                           % use only samples in lpf indices
@@ -27,8 +28,10 @@ function y = stft_AnalysisAndSynthesis(x,N,window)
         
         %-----synthesis-----%
         Y = zeros(N,1);                                                    % initialize output spectrum
-        Y(1:N2) = 10.^(mY/20) .* exp(1i.*pY);                              % generate positive frequencies
-        Y(N2+1:N) = 10.^(mY(N2-1:-1:2)/20) .* exp(-1i.*pY(N2-1:-1:2));     % generate negative frequencies
+        Y(1:N2) = mY .* exp(1i.*pY);                                       % generate positive frequencies (linear)
+        Y(N2+1:N) = mY(N2-1:-1:2) .* exp(-1i.*pY(N2-1:-1:2));              % generate negative frequencies (linear)
+        % Y(1:N2) = 10.^(mY/20) .* exp(1i.*pY);                            % generate positive frequencies (dB)
+        % Y(N2+1:N) = 10.^(mY(N2-1:-1:2)/20) .* exp(-1i.*pY(N2-1:-1:2));   % generate negative frequencies (dB)
         fftbuffer = real(ifft(Y));                                         % compute inverse FFT
         y(pin:pin+N-1) = y(pin:pin+N-1) + window .* fftbuffer;             % overlap-add to generate output sound
         
