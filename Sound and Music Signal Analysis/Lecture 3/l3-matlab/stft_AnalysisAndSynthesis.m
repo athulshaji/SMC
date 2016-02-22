@@ -14,7 +14,7 @@ function y = stft_AnalysisAndSynthesis(x,N,window)
     
     while pin <= pend
         %-----analysis-----%
-        fftbuffer = x(pin:pin+N-1) .* window;                              % frame and window the input sound
+        fftbuffer = x(pin:pin+N) .* window;                              % frame and window the input sound
         X = fft(fftbuffer);                                                % compute FFT
         mX = abs(X(1:N2));                                                 % magnitude spectrum (linear)
         pX = angle(X(1:N2));                                               % phase spectrum        
@@ -27,13 +27,13 @@ function y = stft_AnalysisAndSynthesis(x,N,window)
         pY = pX;                                                           % output phase spectrum
         
         %-----synthesis-----%
-        Y = zeros(N,1);                                                    % initialize output spectrum
+        Y = zeros(N+1,1);                                                  % initialize output spectrum
         Y(1:N2) = mY .* exp(1i.*pY);                                       % generate positive frequencies (linear)
         Y(N2+1:N) = mY(N2-1:-1:2) .* exp(-1i.*pY(N2-1:-1:2));              % generate negative frequencies (linear)
         % Y(1:N2) = 10.^(mY/20) .* exp(1i.*pY);                            % generate positive frequencies (dB)
         % Y(N2+1:N) = 10.^(mY(N2-1:-1:2)/20) .* exp(-1i.*pY(N2-1:-1:2));   % generate negative frequencies (dB)
         fftbuffer = real(ifft(Y));                                         % compute inverse FFT
-        y(pin:pin+N-1) = y(pin:pin+N-1) + window .* fftbuffer;             % overlap-add to generate output sound
+        y(pin:pin+N) = y(pin:pin+N) + window .* fftbuffer;             % overlap-add to generate output sound
         
         pin = pin+H;                                                       % advance sound pointer
     end
