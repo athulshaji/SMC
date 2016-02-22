@@ -22,9 +22,9 @@ if ~exist('x','var')
     [x,fs] = audioread('../../data/twoMaleTwoFemale20Seconds.wav');        % desired signal
 end
 %%
-segmentlength = 0.003;                                                     % 30 ms
+segmentlength = 0.03;                                                      % 30 ms
 N = segmentlength * fs;
-window = sqrt(hanning(N));
+window = sqrt(hanning(N+1));
 
 y = stft_AnalysisAndSynthesis(x,N,window);
 
