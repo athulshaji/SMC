@@ -24,7 +24,7 @@ end
 %%
 segmentlength = 0.03;                                                      % 30 ms
 N = segmentlength * fs;
-window = sqrt(hanning(N+1));
+window = sqrt(hanning(N-1));
 
 y = stft_AnalysisAndSynthesis(x,N,window);
 
