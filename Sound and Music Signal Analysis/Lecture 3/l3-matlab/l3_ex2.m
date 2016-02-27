@@ -21,7 +21,7 @@ idx = 1:sgmtsamples;                                                       % ind
 outputsignal = zeros(size(x));                                               % initialize output sound
 predictionError = zeros(size(x));                                                % 
 lpc_coeffs = [];
-
+Zf = [];
 % Use lpc() with an order of 10 to obtain the prediction error (or excitation) for each segment (use filter())
 while idx(end) < length(x) - sgmtsamples
     sgmt = x(idx); % get a segment of the sound
@@ -35,6 +35,12 @@ while idx(end) < length(x) - sgmtsamples
     % Filter the synthetic signal with the all-pole filter with filter() to resynthesize the speech. 
     % Remember to take care of the filter states (see 'help filter').
     outputsignal(idx) = filter(1,A,noise);
+    [outputsignal(idx), Zf] = filter(1,A,noise,Zf);
+    
     
     idx = idx + sgmtsamples;
 end
+subplot(2,1,1)
+plot(x)
+subplot(2,1,2)
+plot(outputsignal)
