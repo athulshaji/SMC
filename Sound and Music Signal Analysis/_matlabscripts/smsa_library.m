@@ -3,6 +3,8 @@ function message = smsa_library
   assignin('base','stft_Analysis',@stft_Analysis);
   assignin('base','stft_Synthesis',@stft_Synthesis);
   assignin('base','mixatsnr',@mixatsnr);
+  assignin('base','createVandermondeMat',@createVandermondeMat);
+  assignin('base','vandermonde',@vandermonde);
   message='Done importing functions to workspace';
 end
 
@@ -129,4 +131,19 @@ minlen = min(length(clean),length(noise));          % get the length of the shor
 
 output = clean(1:minlen) + gain * noise(1:minlen);  % mix signals
 
+end
+
+function [Z] = createVandermondeMat(w,L,M)
+% input:
+%   w: fundamental frequency
+%   L:number of harmonics
+%   M: number of samples
+% output:
+%   Z: MxL vandermonde matrix
+    
+    z = exp(1i*w * (1:L));          % compute harmonics
+    Z = zeros(M-1,L);               % initialize Vandermonde matrix
+    for n = 1:M                     % for each sample
+        Z(n,:) = z.^(n-1);          % fill Vandermonde matrix
+    end   
 end
