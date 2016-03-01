@@ -4,7 +4,6 @@
 % resulting in different SNRs (0 dB, 10 dB, 20 dB), 
 % and test your implementation using the signals you generated (calculate the MSE). 
 
-
 %% Generate signal and add noise
 desired_snr = 0;                                                           % desired SNR relation between signal and noise
 fs = 44100;                                                                % sampling frequency
@@ -24,10 +23,8 @@ tau = round(fs/highestfreq):10:round(fs/lowestfreq);                       % all
 
 MSE = zeros(length(tau),1);                                                % initialize Mean Squared Error array
 for i = 1:length(tau)                                                      % for all the periods
-    e = zeros(1,N-tau(i));                                                 % initialize error array
-    for n = 1:N-tau(i)                                                     % for all the samples of the signal ?
-        e(n) = x(n) - x(n+tau(i));                                         % compute the error between the n sample
-    end                                                                    % and the sample delayed by tau (period)
+    x_delayed = [zeros(1,tau(i)) x(1:end-tau(i))];                         % delay signal
+    e = x - x_delayed;                                                     % compute the error between the n sample
     MSE(i) = (1/(N-tau(i))) * sum(power(e,2));                             % compute mean squared error for this tau (period)
 end
 [y,i] = min(MSE);                                                          % find the minimum mean squared error
