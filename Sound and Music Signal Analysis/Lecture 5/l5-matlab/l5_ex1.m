@@ -8,18 +8,23 @@
 desired_snr = 0;                                                           % desired SNR relation between signal and noise
 fs = 44100;                                                                % sampling frequency
 f = 440;                                                                   % fundamental frequency
+L = 10;                                                                     % number of harmonics
 A = 0.8;                                                                   % amplitude of the signal
 duration = 1;                                                              % duration of the signal in seconds
 N = fs * duration;                                                         % size of signal in samples
 t = 0:1/fs:duration-1/fs;                                                  % time array of the signal
 
-signal = A * sin(2*pi*f*t);                                                % create signal
+signal = zeros(size(t));                                                   % initialize signal
+for n = 1:L
+    signal = signal + (A/n) * sin(2*pi*f*n*t);                             % create signal
+end
+signal = signal/max(signal);
 x = awgn(signal,desired_snr,'measured');                                   % add gaussian noise to the signal
 
-%% Pitch estimation
+%% Pitch estimation with Comb filtering
 lowestfreq = 100;                                                          % lowest frequency considered
 highestfreq = 1000;                                                        % highest frequency considered
-tau = round(fs/highestfreq):10:round(fs/lowestfreq);                       % all periods considered
+tau = round(fs/highestfreq):1:round(fs/lowestfreq);                        % all periods considered
 
 MSE = zeros(length(tau),1);                                                % initialize Mean Squared Error array
 for i = 1:length(tau)                                                      % for all the periods
