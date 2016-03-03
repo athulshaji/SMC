@@ -28,8 +28,8 @@ tau = round(fs/highestfreq):1:round(fs/lowestfreq);                        % all
 
 MSE = zeros(length(tau),1);                                                % initialize Mean Squared Error array
 for i = 1:length(tau)                                                      % for all the periods
-    x_delayed = [zeros(1,tau(i)) x(1:end-tau(i))];                         % delay signal
-    e = x - x_delayed;                                                     % compute the error between the n sample
+    x_delayed = x(tau(i)+1:end);                                           % delay signal
+    e = x(1:end-tau(i)) - x_delayed;                                       % compute the error between the n sample
     MSE(i) = (1/(N-tau(i))) * sum(power(e,2));                             % compute mean squared error for this tau (period)
 end
 [y,i] = min(MSE);                                                          % find the minimum mean squared error
