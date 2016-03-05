@@ -3,11 +3,10 @@
 % (assume complex signals, use, e.g., analytic.m) and test the estimator on your signals from exercise 1. 
 % Describe the differences you observe for the various noise levels.
 clear; clc
-addpath('../../_smsa-matlab')                                            % add the path of the smsa library
-disp(smsa_library);                                                        % initialize smsa library, used for Vandermonde
+% addpath('../../_smsa-matlab')                                            % add the path of the smsa library
 
 %% Generate signal and add noise
-desired_snr = 0;                                                           % desired SNR relation between signal and noise
+desired_snr = 10;                                                           % desired SNR relation between signal and noise
 fs = 44100;                                                                % sampling frequency
 f = 440;                                                                   % fundamental frequency
 L = 10;                                                                     % number of harmonics
@@ -31,24 +30,8 @@ sgmt = x(1:M);
 estimated_w = zeros(1,length(w_array));
 for i = 1:length(w_array)
     w = w_array(i);
-    Z = createVandermondeMat(w,L,M);
+    Z = l5_createVandermondeMat(w,L,M);
     estimated_w(i) = power(norm(Z'*sgmt',2),2);
 end
 [val idx] = max(estimated_w);
 w_array(idx)
-
-%%
-% function [Z] = createVandermondeMat(w,L,M)
-% % input:
-% %   w: fundamental frequency
-% %   L:number of harmonics
-% %   M: number of samples
-% % output:
-% %   Z: MxL vandermonde matrix
-%     
-%     z = exp(1i*w * (1:L));          % compute harmonics
-%     Z = zeros(M-1,L);               % initialize Vandermonde matrix
-%     for n = 1:M                     % for each sample
-%         Z(n,:) = z.^(n-1);          % fill Vandermonde matrix
-%     end   
-% end
