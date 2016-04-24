@@ -22,8 +22,13 @@ theta       = zeros(1,nmodes);
 A0          = zeros(1,nmodes);
 d           = zeros(1,nmodes);
 delayline   = zeros(nmodes,floor(fs/fm(1)));
-for m = 1:nmodes
-    [phi(m),R(m),theta(m),A0(m),d(m)] = cmpt_modeparameters(B(m),fm(m),fs);
+for m = 1:nmodes                                                           % compute parameters for each mode :
+    phi(m) = 2 * pi * (fm(m)/fs);                                          % resonance frequency
+    % parameters for the poles
+    R(m) = 0.99-B(m)/2;                                                    % filter bandwidth
+    theta(m) = acos((2 * R(m) * cos(phi(m))) / (1 + R(m) * R(m)));         %
+    A0(m) = (1 - R(m) * R(m)) * sin(theta(m));                             % gain
+    d(m) = floor(fs/fm(m));                                                % compute delay line length
 end
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
