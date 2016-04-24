@@ -4,11 +4,18 @@ f0          = 440;                                                         % fun
 fm          = f0*(1:nmodes);                                               % frequency for each mode
 iterations  = 20000;
 fs          = 44100;                                                       % sampling frequency
-fb_gain     = 0.97;                                                        % feedback gain. < 1
+fb_gain     = 0.995;                                                        % feedback gain. < 1
 
 % create excitation - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-N = ceil(fs/f0);
-x = 2 * rand(1,N) - 1;                                                     % generate noise centered at zero
+% noise:
+% N = ceil(fs/f0);
+% x = 2 * rand(1,N) - 1;
+
+% impact:
+Fm = 0.6;
+forceduration = 0.002;
+t = 0:1/fs:forceduration;
+x = Fm * (1 - cos(2*pi*t/forceduration));
 
 if iterations > length(x)
     x = [x zeros(1,iterations - length(x))];
