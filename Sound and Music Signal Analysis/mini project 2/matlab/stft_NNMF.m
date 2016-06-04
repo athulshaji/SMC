@@ -29,45 +29,21 @@ end
 % disp('Non-negative Matrix Factorization')
 K = 50;                                                                    % number of atoms
 iterations = 100;                                                          % iterations to find atoms and activation matrices
-atomMatrix = rand(N2,K);                                                   % initialize atom matrix
+atomMatrix = abs(rand(N2,K));                                              % initialize atom matrix
 activationMat = rand(K,size(mX,2));                                        % initialize activation matrix
 BB = ones(size(mX));
-it = 0;
-while it <= iterations
-%   A          = A          .* (   Y ./ (A          * X            +psi)  * X')            ./ (B  * X');
-%   atomMatrix = atomMatrix .* (  mX  ./(atomMatrix * activationMat+psi)  * activationMat')./(B   * activationMat');
-    atomMatrix = atomMatrix .* (((mX ./ (atomMatrix * activationMat+eps)) * activationMat')./(BB  * activationMat'));
-    
-%   X             = X             .* ( A'          * (Y ./(A         *  X            +psi))) ./ (A'        * B+lambda*ones(size(A'*B)));
-%   activationMat = activationMat .* ( atomMatrix' * (mX./(atomMatrix * activationMat+psi)))./(atomMatrix' * B+lambda*ones(size(atomMatrix'*B)))
-    activationMat = activationMat .* ((atomMatrix' * (mX./(atomMatrix * activationMat+eps)))./(atomMatrix' * BB + zeros(size(atomMatrix'*BB))));
+for it = 0:iterations
+    atomMatrix = atomMatrix .* (mX ./ (atomMatrix * activationMat+eps) * activationMat')./(BB  * activationMat');
+    activationMat = activationMat .* (atomMatrix' * (mX./(atomMatrix * activationMat+eps)))./(atomMatrix' * BB + zeros(size(atomMatrix'*BB)));
     
     if ploton
         imagesc(atomMatrix);title('atom Matrix')
         drawnow
     end
-    
-    it = it + 1;
 end
 
 mX = atomMatrix * activationMat;
-pX = angle(mX);
-
-
-% Y=abs(Ytmp);
-% K=50;
-% A=abs(randn(F,K));
-% X=rand(K,size(Y,2));
-% B=ones(size(Y));
-% lambda=0;
-% for i=1:100,
-%     A=A.*(Y./(A*X+psi)*X')./(B*X');
-%     X=X.*(A'*(Y./(A*X+psi)))./(A'*B+lambda*ones(size(A'*B)));
-% end
-% Yhat=(A*X);
-
-
-
+pX = pX;%angle(mX);
 
 %-----synthesis-----%  
 pin = 1;                                                        % initialize sound pointer in
