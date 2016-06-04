@@ -1,4 +1,4 @@
-function y = stft_NNMF(x,N,ploton,K)
+function y = stft_NNMF(x,N,ploton,K,iterations)
 % Analysis and Synthesis of a sound using the short-time fourier transform
 % x: input sound,
 % N: FFT size
