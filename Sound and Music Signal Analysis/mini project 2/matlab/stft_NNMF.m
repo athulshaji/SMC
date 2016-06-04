@@ -1,4 +1,4 @@
-function y = stft_NNMF(x,N,ploton)
+function y = stft_NNMF(x,N,ploton,K)
 % Analysis and Synthesis of a sound using the short-time fourier transform
 % x: input sound,
 % N: FFT size
@@ -14,7 +14,7 @@ pend    = sndlen-N;                                             % initialize sou
 mX      = [];
 pX      = [];
 
-%-----analysis-----%
+%% %-----analysis-----%
 while pin <= pend
     fftbuffer = x(pin:pin+M-1) .* window;                       % frame and window the input sound
     X = fft(fftbuffer);                                         % compute FFT
@@ -23,12 +23,7 @@ while pin <= pend
     pin = pin+H;                                                % advance sound pointer
 end
 
-%-----transformations-----%  
-
-%% Non-negative Matrix Factorization
-% disp('Non-negative Matrix Factorization')
-K = 50;                                                                    % number of atoms
-iterations = 100;                                                          % iterations to find atoms and activation matrices
+%% transformations: Non-negative Matrix Factorization
 atomMatrix = abs(rand(N2,K));                                              % initialize atom matrix
 activationMat = rand(K,size(mX,2));                                        % initialize activation matrix
 BB = ones(size(mX));
@@ -43,9 +38,9 @@ for it = 0:iterations
 end
 
 mX = atomMatrix * activationMat;
-pX = pX;%angle(mX);
+pX = pX;% angle(mX);
 
-%-----synthesis-----%  
+%% %-----synthesis-----%  
 pin = 1;                                                        % initialize sound pointer in
 y = zeros(sndlen,1);                                            % initialize output sound
 for idx = 1:size(mX,2)
